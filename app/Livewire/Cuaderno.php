@@ -29,24 +29,11 @@ class Cuaderno extends Component
     {
         $ListCir = IN_CIRCUITO::select('CI_SERIAL', 'CI_CIRCUITO')
         ->get();
-        return view('livewire.cuaderno',compact('ListCir'));
+        $ListTec = AC_TECNICO::select('TE_ID', 'TE_NOMBRE')
+        ->get();
+        return view('livewire.cuaderno',compact('ListCir'),compact('ListTec'));
     }
-    public function buscarCircuitos(Request $request)
-    {
-        $search = $request->input('q');
 
-        $resultados = \App\Models\IN_CIRCUITO::select('CI_SERIAL', 'CI_CIRCUITO')
-            ->where('CI_CIRCUITO', 'like', '%' . $search . '%')
-            ->limit(10)
-            ->get();
-
-        return response()->json($resultados->map(function ($item) {
-            return [
-                'id' => $item->CI_SERIAL,
-                'text' => $item->CI_CIRCUITO,
-            ];
-        }));
-    }
 
     public function guardar()
     {

@@ -5,25 +5,45 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\IN_CUADERNO;
 use App\Models\IN_CIRCUITO;
+use App\Models\AC_TECNICO;
 
 class ListaCuaderno extends Component
 {
     public $search = '';
     public $circuitoId;
+    public $fecha_inicio;
+    public $fecha_fin;
+
 
     public $ing_turno, $operador, $tecnico1_id, $tecnico2_id, $c_center;
-    public $sin_energia, $reg, $fecha, $hora_i, $hora_f;
+    public $sin_energia, $reg, $fecha, $hora_i, $hora_f, $ci_circuito;
     public $segun, $informo_a, $causa;
-    public $showModal=true;
+    public $showModal=false;
     public $cuadernoId;
+    public $nom_tecnico1;
+    public $nom_tecnico2;
+    public $tecnico1, $tecnico2;
 
     public function render()
     {
-        $cuadernos = IN_CUADERNO::all();
+        $cuadernos = IN_CUADERNO::query()
+        ->when($this->fecha_inicio, fn($query) =>
+            $query->where('fecha', '>=', $this->fecha_inicio)
+        )
+        ->when($this->fecha_fin, fn($query) =>
+            $query->where('fecha', '<=', $this->fecha_fin)
+        )
+        ->get();
+
         $ListCir = IN_CIRCUITO::select('CI_SERIAL', 'CI_CIRCUITO')
         ->get();
-        return view('livewire.lista-cuaderno',compact('cuadernos'),compact('ListCir'));
+        $ListTecnico = AC_TECNICO::select('TE_ID', 'TE_NOMBRE')
+        ->get();
+        // $this->fecha_inicio = null;
+        // $this->fecha_fin = null;
+        return view('livewire.lista-cuaderno', compact('cuadernos', 'ListCir', 'ListTecnico'));
     }
+    public function filtrar(){}
 
     public function openModal(){
         $this->showModal=true;
@@ -45,17 +65,29 @@ class ListaCuaderno extends Component
             $this->sin_energia = $cuaderno->sin_energia;
             $this->reg = $cuaderno->reg;
             $this->fecha = $cuaderno->fecha;
-            $this->hora_i = $cuaderno->hora_i;
-            $this->hora_f = $cuaderno->hora_f;
+            $this->hora_i = substr($cuaderno->hora_i, 0, 5);
+            $this->hora_f = substr($cuaderno->hora_f, 0, 5);
+            $this->circuitoId = $cuaderno->circuito_id;
             $this->segun = $cuaderno->segun;
             $this->informo_a = $cuaderno->informo_a;
             $this->causa = $cuaderno->causa;
 
-            // Open the modal
             $this->showModal = true;
-        } else {
-            session()->flash('error', 'Cuaderno not found.');
+        } 
+        $circuito = IN_CIRCUITO::where('CI_SERIAL', $this->circuitoId)->first();
+        if ($circuito) {
+            $this->ci_circuito = $circuito->CI_CIRCUITO;
         }
+        $tecnico1 = AC_TECNICO::where('TE_ID', $this->tecnico1_id)->first();
+        if ($tecnico1) {
+            $this->nom_tecnico1 = $tecnico1->TE_NOMBRE;
+        }
+        $tecnico2 = AC_TECNICO::where('TE_ID', $this->tecnico2_id)->first();
+        if ($tecnico2) {
+            $this->nom_tecnico2 = $tecnico2->TE_NOMBRE;
+        }
+
+        //dd($this->nom_tecnico1, $this->nom_tecnico2);
     }
 
     public function actualizar()
@@ -74,15 +106,14 @@ class ListaCuaderno extends Component
                     'fecha' => $this->fecha,
                     'hora_i' => $this->hora_i,
                     'hora_f' => $this->hora_f,
+                    'circuito_id' => $this->circuitoId,
                     'segun' => $this->segun,
                     'informo_a' => $this->informo_a,
                     'causa' => $this->causa
                 ]);
-                session()->flash('message', 'Cuaderno updated successfully.');
-            } else {
-                session()->flash('error', 'Cuaderno not found.');
-            }
+            } 
         }
+        $this->closeModal();
        
 
     }

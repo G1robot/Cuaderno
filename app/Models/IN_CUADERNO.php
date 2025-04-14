@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IN_CIRCUITO;
+use App\Models\AC_TECNICO;
 
 class IN_CUADERNO extends Model
 {
@@ -30,5 +31,13 @@ class IN_CUADERNO extends Model
     public function circuito()
     {
         return $this->belongsTo(IN_CIRCUITO::class, 'circuito_id', 'CI_SERIAL');
+    }
+    public function tecnico2()
+    {
+        return $this->belongsTo(AC_TECNICO::class, 'tecnico2_id', 'TE_ID');
+    }
+    public function tecnico1()
+    {
+        return $this->belongsTo(AC_TECNICO::class, 'tecnico1_id', 'TE_ID');
     }
 }

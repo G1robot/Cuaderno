@@ -41,14 +41,74 @@
                 </div>
             </div>
             <div class="d-flex gap-3">
-                <div class="form-group double-field">
+                {{-- Tecnico 1: --}}
+                <div wire:ignore class="form-group double-field">
                     <label>Tec. Turno 1:</label>
-                    <input  style="border-color: #343a40;" type="text" class="form-control" name="tec_turno_1" value="{{ Auth::user()->name }}" readonly>
+                    <select id="select2Tec1" class="form-control" style="width: 100%">
+                        <option value="">Seleccione Tecnico 1</option>
+                        @foreach($ListTec as $tecnico1)
+                            <option value="{{ $tecnico1->TE_ID }}">{{ $tecnico1->TE_NOMBRE }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <div class="form-group double-field">
+                
+                <script>
+                    $(document).ready(function () {
+                        $('#select2Tec1').select2({
+                            placeholder: 'Buscar tecnico...',
+                            allowClear: true,
+                        });
+                
+                        $('#select2Tec1').on('change', function (e) {
+                            var value = $(this).val();
+                            @this.set('tecnico1_id', value);
+                        });
+                    });
+                
+                    document.addEventListener('livewire:load', function () {
+                        Livewire.hook('message.processed', (message, component) => {
+                            $('#select2Tec1').select2({
+                                placeholder: 'Buscar tecnico...',
+                                allowClear: true,
+                            });
+                        });
+                    });
+                </script>
+
+                
+                {{-- Tecnico 2: --}}
+                <div wire:ignore class="form-group double-field">
                     <label>Tec. Turno 2:</label>
-                    <input wire:model="tecnico2_id"  style="border-color: #343a40;" type="text" class="form-control" name="tec_turno_2">
+                    <select id="select2Tec2" class="form-control" style="width: 100%">
+                        <option value="">Seleccione Tecnico 2</option>
+                        @foreach($ListTec as $tecnico2)
+                            <option value="{{ $tecnico2->TE_ID }}">{{ $tecnico2->TE_NOMBRE }}</option>
+                        @endforeach
+                    </select>
                 </div>
+                
+                <script>
+                    $(document).ready(function () {
+                        $('#select2Tec2').select2({
+                            placeholder: 'Buscar tecnico...',
+                            allowClear: true,
+                        });
+                
+                        $('#select2Tec2').on('change', function (e) {
+                            var value = $(this).val();
+                            @this.set('tecnico2_id', value);
+                        });
+                    });
+                
+                    document.addEventListener('livewire:load', function () {
+                        Livewire.hook('message.processed', (message, component) => {
+                            $('#select2Tec2').select2({
+                                placeholder: 'Buscar tecnico...',
+                                allowClear: true,
+                            });
+                        });
+                    });
+                </script>
             </div>
             <div class="form-group">
                 <label>C. Center:</label>
@@ -101,14 +161,12 @@
                             allowClear: true,
                         });
                 
-                        // Escuchar cambios y actualizar propiedad Livewire
                         $('#select2Circuito').on('change', function (e) {
                             var value = $(this).val();
                             @this.set('circuitoId', value);
                         });
                     });
                 
-                    // Para reinicializar cuando Livewire renderice de nuevo
                     document.addEventListener('livewire:load', function () {
                         Livewire.hook('message.processed', (message, component) => {
                             $('#select2Circuito').select2({
