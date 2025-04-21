@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'pgsql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -99,7 +99,7 @@ return [
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',
-            'host' => env('DB_SQLSRV_HOST', '192.245.120.165'),
+            'host' => env('DB_SQLSRV_HOST', '192.245.120.179'),
             'port' => env('DB_SQLSRV_PORT', '1433'),
             'database' => env('DB_SQLSRV_DATABASE', 'SIG'),
             'username' => env('DB_SQLSRV_USERNAME', 'SIG'),
